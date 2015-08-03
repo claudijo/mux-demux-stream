@@ -1,0 +1,34 @@
+{
+  "name": "mux-demux-stream",
+  "version": "0.0.1",
+  "description": "Multiplexer and demultiplexter for binary/text streams.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --check-leaks --reporter spec --bail --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudijo/mux-demux-stream.git"
+  },
+  "keywords": [
+    "mux",
+    "multiplex",
+    "multiplexer",
+    "demux",
+    "demultiplex",
+    "demultiplexer"
+  ],
+  "author": "Claudijo Borovic <hello@claudijo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/claudijo/mux-demux-stream/issues"
+  },
+  "homepage": "https://github.com/claudijo/mux-demux-stream#readme",
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "through2": "^2.0.0"
+  }
+}
