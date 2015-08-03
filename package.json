@@ -27,6 +27,10 @@
     "url": "https://github.com/claudijo/mux-demux-stream/issues"
   },
   "homepage": "https://github.com/claudijo/mux-demux-stream#readme",
+  "files": [
+    "LICENSE",
+    "index.js"
+  ],
   "devDependencies": {
     "mocha": "^2.2.5",
     "through2": "^2.0.0"
