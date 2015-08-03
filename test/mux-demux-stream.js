@@ -24,10 +24,9 @@ describe('Mux Demux Stream', function() {
     });
 
     it('should prepend chunk with one byte channel id', function(done) {
-      mux([sourceA], destination);
-
       destination.on('readable', function() {
-        var channelId = this.read(1).readUInt8(0);
+        var chunk = this.read();
+        var channelId = chunk.readUInt8(0);
         assert(channelId === 0);
         done();
       });
@@ -37,9 +36,8 @@ describe('Mux Demux Stream', function() {
 
     it('should prepend chunk with four byte payload length', function(done) {
       destination.on('readable', function() {
-        var payloadLength;
-        this.read(1);
-        payloadLength = this.read(4).readUInt32BE(0);
+        var chunk = this.read();
+        var payloadLength = chunk.readUInt32BE(1);
         assert(payloadLength === 3);
         done();
       });
@@ -49,10 +47,9 @@ describe('Mux Demux Stream', function() {
 
     it('should append payload to chunk', function(done) {
       destination.on('readable', function() {
-        var payloadLength, payload;
-        this.read(1);
-        payloadLength = this.read(4).readUInt32BE(0);
-        payload = this.read(payloadLength).toString();
+        var chunk = this.read();
+        var payload = chunk.slice(5, chunk.length).toString();
+
         assert(payload === 'foo');
         done();
       });
@@ -65,20 +62,21 @@ describe('Mux Demux Stream', function() {
       var messages = ['foo', 'bar'];
 
       destination.on('readable', function() {
-        var chunk, channelId, payloadLength, payload;
-
-        chunk = this.read(1);
+        var chunk = this.read();
 
         if (chunk === null) {
           return;
         }
 
-        channelId = chunk.readUInt8(0);
-        payloadLength = this.read(4).readUInt32BE(0);
-        payload = this.read(payloadLength).toString();
+        var channelId = chunk.readUInt8(0);
+        var payloadLength = chunk.readUInt32BE(1);
+        var payload = chunk.slice(5, chunk.length).toString();
 
         assert(channelId === chunkCount);
-        assert(payload === messages[chunkCount++]);
+        assert(payloadLength === messages[chunkCount].length);
+        assert(payload === messages[chunkCount]);
+
+        chunkCount += 1;
 
         if (chunkCount === 2) {
           done();
