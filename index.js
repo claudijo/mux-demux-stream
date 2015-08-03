@@ -2,7 +2,7 @@ exports.mux = function(sources, destination) {
   var sourceEndCount = 0;
 
   if (sources.length > 8) {
-    throw new RangeError('Too many sources to multiplex: ' + sources.length);
+    throw new RangeError('Too many sources: ' + sources.length);
   }
 
   sources.forEach(function(source, index) {
@@ -29,25 +29,42 @@ exports.mux = function(sources, destination) {
 exports.demux = function(source, destinations) {
   var packetHead = null;
 
-  source.on('readable', function() {
-    var chunk;
+  if (destinations.length > 8) {
+    throw new RangeError('Too many destinations: ' + destinations.length);
+  }
 
-    if (!packetHead) {
-      if ((chunk = this.read(5)) === null) {
+  source
+    .on('readable', function() {
+      var chunk;
+
+      if (!packetHead) {
+        if ((chunk = this.read(5)) === null) {
+          return;
+        }
+
+        packetHead = {
+          channelId: chunk.readUInt8(0),
+          payloadLength: chunk.readUInt32BE(1)
+        };
+      }
+
+      if ((chunk = this.read(packetHead.payloadLength)) === null) {
         return;
       }
 
-      packetHead = {
-        channelId: chunk.readUInt8(0),
-        payloadLength: chunk.readUInt32BE(1)
-      };
-    }
+      if (!destinations[packetHead.channelId]) {
+        source.emit('error', new RangeError('Destination for channel id ' +
+            packetHead.channelId + ' is not available'));
+        packetHead = null;
+        return;
+      }
 
-    if ((chunk = this.read(packetHead.payloadLength)) === null) {
-      return;
-    }
-
-    destinations[packetHead.channelId].write(chunk);
-    packetHead = null;
-  });
+      destinations[packetHead.channelId].write(chunk);
+      packetHead = null;
+    })
+    .on('end', function() {
+      destinations.forEach(function(destination) {
+        destination.end();
+      });
+    });
 };

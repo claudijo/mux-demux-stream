@@ -24,7 +24,7 @@ describe('Multiplexer demultiplexer stream', function() {
       destination = null;
     });
 
-    it('should prepend chunks with one byte channel id', function(done) {
+    it('should prepend chunk with one byte channel id', function(done) {
       mux([sourceA], destination);
 
       destination.on('readable', function() {
@@ -112,7 +112,7 @@ describe('Multiplexer demultiplexer stream', function() {
       }, 0);
     });
 
-    it('should close destination stream if  all sources have been closed', function(done) {
+    it('should close destination stream if all sources have been closed', function(done) {
       destination
         .on('readable', function() {
           this.read();
@@ -162,7 +162,7 @@ describe('Multiplexer demultiplexer stream', function() {
       source = null;
     });
 
-    it('should pipe message to correct destination', function(done) {
+    it('should forward message to correct destination', function(done) {
       destinationB.on('readable', function() {
         var chunk = this.read();
         assert(chunk.toString() === 'foo');
@@ -200,7 +200,7 @@ describe('Multiplexer demultiplexer stream', function() {
       source.write(helpers.createMultiplexedMessageBuffer(1, 'bar'));
     });
 
-    it.only('should handle a message distributed over several chunks', function(done) {
+    it('should handle a message distributed over several chunks', function(done) {
       var messageBuffer = helpers.createMultiplexedMessageBuffer(1, 'foo');
 
       destinationB.on('readable', function() {
@@ -217,6 +217,56 @@ describe('Multiplexer demultiplexer stream', function() {
       source.write(messageBuffer.slice(5, 6));
       source.write(messageBuffer.slice(6, 7));
       source.end(messageBuffer.slice(7, 8));
+    });
+
+    it('should close all destination streams if source has been closed', function(done) {
+      var callCount = 0;
+
+      destinationA
+        .on('readable', function() {
+          this.read();
+        })
+        .on('end', function() {
+          if (++callCount === 2) {
+            done();
+          }
+        });
+
+      destinationB
+        .on('readable', function() {
+          this.read();
+        })
+        .on('end', function() {
+          if (++callCount === 2) {
+            done();
+          }
+        });
+
+      source.end();
+    });
+
+    it('should emit error if destination for channel id is unavailable', function(done) {
+      source.on('error', function(err) {
+        assert(err instanceof RangeError);
+        done();
+      });
+
+      source.write(helpers.createMultiplexedMessageBuffer(3, 'foo'));
+    });
+
+    it('should throw if providing too many destinations', function(done) {
+      var destinations = [];
+      var i;
+      for (i = 0; i < 10; i++) {
+        destinations[i] = through2();
+      }
+
+      try {
+        demux(source, destinations);
+      } catch(err) {
+        assert(err instanceof RangeError);
+        done();
+      }
     });
   });
 });
