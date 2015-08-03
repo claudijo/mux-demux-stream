@@ -27,7 +27,7 @@ exports.mux = function(sources, destination) {
 };
 
 exports.demux = function(source, destinations) {
-  var packetHead = null;
+  var header = null;
 
   if (destinations.length > 8) {
     throw new RangeError('Too many destinations: ' + destinations.length);
@@ -37,30 +37,30 @@ exports.demux = function(source, destinations) {
     .on('readable', function() {
       var chunk;
 
-      if (!packetHead) {
+      if (!header) {
         if ((chunk = this.read(5)) === null) {
           return;
         }
 
-        packetHead = {
+        header = {
           channelId: chunk.readUInt8(0),
           payloadLength: chunk.readUInt32BE(1)
         };
       }
 
-      if ((chunk = this.read(packetHead.payloadLength)) === null) {
+      if ((chunk = this.read(header.payloadLength)) === null) {
         return;
       }
 
-      if (!destinations[packetHead.channelId]) {
+      if (!destinations[header.channelId]) {
         source.emit('error', new RangeError('Destination for channel id ' +
-            packetHead.channelId + ' is not available'));
-        packetHead = null;
+            header.channelId + ' is not available'));
+        header = null;
         return;
       }
 
-      destinations[packetHead.channelId].write(chunk);
-      packetHead = null;
+      destinations[header.channelId].write(chunk);
+      header = null;
     })
     .on('end', function() {
       destinations.forEach(function(destination) {
