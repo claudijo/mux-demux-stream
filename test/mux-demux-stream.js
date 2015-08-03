@@ -4,8 +4,7 @@ var mux = require('..').mux;
 var demux = require('..').demux;
 var helpers = require('./helpers');
 
-describe('Multiplexer demultiplexer stream', function() {
-
+describe('Mux Demux Stream', function() {
   describe('multiplex', function() {
     var sourceA = null;
     var sourceB = null;
