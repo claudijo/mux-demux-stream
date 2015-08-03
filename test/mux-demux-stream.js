@@ -209,9 +209,14 @@ describe('Multiplexer demultiplexer stream', function() {
         done();
       });
 
-      source.write(messageBuffer.slice(0, 1)); // Channel id
-      source.write(messageBuffer.slice(1, 5)); // payload length
-      source.end(messageBuffer.slice(5, messageBuffer.length)); // payload
+      source.write(messageBuffer.slice(0, 1));
+      source.write(messageBuffer.slice(1, 2));
+      source.write(messageBuffer.slice(2, 3));
+      source.write(messageBuffer.slice(3, 4));
+      source.write(messageBuffer.slice(4, 5));
+      source.write(messageBuffer.slice(5, 6));
+      source.write(messageBuffer.slice(6, 7));
+      source.end(messageBuffer.slice(7, 8));
     });
   });
 });

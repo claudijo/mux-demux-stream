@@ -27,35 +27,27 @@ exports.mux = function(sources, destination) {
 };
 
 exports.demux = function(source, destinations) {
-  var channelId = null;
-  var payloadLength = null;
+  var packetHead = null;
 
   source.on('readable', function() {
     var chunk;
 
-    if (channelId === null) {
-      if ((chunk = this.read(1)) === null) {
+    if (!packetHead) {
+      if ((chunk = this.read(5)) === null) {
         return;
       }
 
-      channelId = chunk.readUInt8(0);
+      packetHead = {
+        channelId: chunk.readUInt8(0),
+        payloadLength: chunk.readUInt32BE(1)
+      };
     }
 
-    if (payloadLength === null) {
-      if ((chunk = this.read(4)) === null) {
-        return
-      }
-
-      payloadLength = chunk.readUInt32BE(0);
-    }
-
-    if ((chunk = this.read(payloadLength)) === null) {
+    if ((chunk = this.read(packetHead.payloadLength)) === null) {
       return;
     }
 
-    destinations[channelId].write(chunk);
-
-    channelId = null;
-    payloadLength = null;
+    destinations[packetHead.channelId].write(chunk);
+    packetHead = null;
   });
 };
