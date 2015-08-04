@@ -8,8 +8,8 @@ Multiplex and demultiplex up to eight binary/text streams with a single
 multiplexer or demultiplexer. Each chunk of data is prepended with a five bytes
 header, including channel id and payload length.
 
-| 1 byte (Channel ID) | 4 bytes (Payload length) | Original payload |
-|---------------------|--------------------------|------------------|
+| 1 byte (Channel ID) | 4 bytes (Payload length) | Original payload of variable length |
+|---------------------|--------------------------|-------------------------------------|
 
 ## Usage
 
