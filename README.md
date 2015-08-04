@@ -1,4 +1,4 @@
-#Mux Demux Stream
+# Mux Demux Stream
 
 Multiplexer and demultiplexter for binary/text streams with inspiration from the
 book [Node.js Design Patterns](https://www.packtpub.com/web-development/nodejs-design-patterns)
@@ -10,6 +10,12 @@ header, including channel id and payload length.
 
 | 1 byte (Channel ID) | 4 bytes (Payload length) | Original payload of variable length |
 |---------------------|--------------------------|-------------------------------------|
+
+## Installation
+
+```js
+npm install mux-demux-stream
+```
 
 ## Usage
 
