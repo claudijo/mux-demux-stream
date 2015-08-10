@@ -83,7 +83,7 @@ The duplex variant uses "chaining" and closures to form a natural stream syntax
 when several duplex streams are multiplexed into and from a shared channel
 stream.
 
-The following simplex syntax
+The following simplex syntax:
 
 ```js
 // "Cross-wire" local client stream and server stream, assuming that the local
@@ -94,7 +94,7 @@ mux([localClientStream, localServerStream], sharedChannel);
 demux(sharedChannel, [localServerStream, localClientStream]);
 ```
 
-is equivalent to the following duplex syntax.
+is equivalent to the following duplex syntax:
 
 ```js
 // "Cross-wire" local client stream and server stream, assuming that the local
