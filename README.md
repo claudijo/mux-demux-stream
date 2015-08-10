@@ -26,7 +26,7 @@ The simplex syntax is used for multiplexing several readable streams into a sing
 writable stream, or demultiplexing several writable streams into a single
 readable stream.
 
-The duplex syntax is more compact when for example implementing
+The duplex syntax is more compact when for example implementing a protocol like
 [JSON RPC 2.0](http://www.jsonrpc.org/specification) in a peer-to-peer fashion,
 where each RPC node consist of a server and a client that share a common
 bidirectional channel such as
