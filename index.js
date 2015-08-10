@@ -1,4 +1,4 @@
-exports.mux = function(sources, destination) {
+var multiplex = function(sources, destination) {
   var sourceEndCount = 0;
 
   if (sources.length > 8) {
@@ -26,7 +26,7 @@ exports.mux = function(sources, destination) {
   });
 };
 
-exports.demux = function(source, destinations) {
+var demultiplex = function(source, destinations) {
   var header = null;
 
   if (destinations.length > 8) {
@@ -68,3 +68,26 @@ exports.demux = function(source, destinations) {
       });
     });
 };
+
+// Compact mux/demux
+var mux = function(var_args) {
+  var sources = Array.prototype.slice.call(arguments);
+
+  return {
+    pipe: function (destination) {
+      multiplex(sources, destination);
+      return {
+        demux: function (var_args) {
+          var destinations = Array.prototype.slice.call(arguments);
+
+          demultiplex(destination, destinations);
+        }
+      };
+    }
+  };
+};
+
+mux.mux = multiplex;
+mux.demux = demultiplex;
+
+module.exports = mux;

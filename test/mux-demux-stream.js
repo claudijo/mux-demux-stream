@@ -1,7 +1,8 @@
 var assert = require('assert');
 var through2 = require('through2');
-var mux = require('..').mux;
-var demux = require('..').demux;
+var mux = require('..');
+var multiplex = require('..').mux;
+var demultiplex = require('..').demux;
 var helpers = require('./helpers');
 
 describe('Mux Demux Stream', function() {
@@ -14,7 +15,7 @@ describe('Mux Demux Stream', function() {
       sourceA = through2();
       sourceB = through2();
       destination = through2();
-      mux([sourceA, sourceB], destination);
+      multiplex([sourceA, sourceB], destination);
     });
 
     afterEach(function() {
@@ -133,7 +134,7 @@ describe('Mux Demux Stream', function() {
       }
 
       try {
-        mux(sources, destination);
+        multiplex(sources, destination);
       } catch(err) {
         assert(err instanceof RangeError);
         done();
@@ -150,7 +151,7 @@ describe('Mux Demux Stream', function() {
       destinationA = through2();
       destinationB = through2();
       source = through2();
-      demux(source, [destinationA, destinationB]);
+      demultiplex(source, [destinationA, destinationB]);
     });
 
     afterEach(function() {
@@ -259,11 +260,56 @@ describe('Mux Demux Stream', function() {
       }
 
       try {
-        demux(source, destinations);
+        demultiplex(source, destinations);
       } catch(err) {
         assert(err instanceof RangeError);
         done();
       }
+    });
+  });
+
+  describe('compact mux demux', function () {
+    var sharedChannel = null;
+    var localChannelA = null;
+    var localChannelB = null;
+    var remoteChannelA = null;
+    var remoteChannelB = null;
+
+    beforeEach(function () {
+      sharedChannel = through2();
+      localChannelA = through2();
+      localChannelB = through2();
+      remoteChannelA = through2();
+      remoteChannelB = through2();
+
+      mux(localChannelA, localChannelB)
+        .pipe(sharedChannel)
+        .demux(remoteChannelA, remoteChannelB);
+    });
+
+    afterEach(function() {
+      sharedChannel = null;
+      localChannelA = null;
+      localChannelB = null;
+      remoteChannelA = null;
+      remoteChannelB = null;
+
+    });
+
+    it('should forward message to correct destination', function (done) {
+      remoteChannelA.on('readable', function () {
+        assert(false); // This callback should not have been called
+      });
+
+      remoteChannelB.on('readable', function () {
+        var chunk = this.read();
+
+        assert(chunk.toString() === 'foo');
+      });
+
+      localChannelB.write('foo');
+
+      setTimeout(done, 0);
     });
   });
 });
