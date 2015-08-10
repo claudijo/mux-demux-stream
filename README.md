@@ -86,24 +86,16 @@ stream.
 The following simplex syntax:
 
 ```js
-// "Cross-wire" local client stream and server stream, assuming that the local
-// client communicates with a corresponding remote server, and vice versa, that
-// the local server communicates with a corresponding remote client.
-
 mux([localClientStream, localServerStream], sharedChannel);
-demux(sharedChannel, [localServerStream, localClientStream]);
+demux(sharedChannel, [localClientStream, localServerStream]);
 ```
 
 is equivalent to the following duplex syntax:
 
 ```js
-// "Cross-wire" local client stream and server stream, assuming that the local
-// client communicates with a corresponding remote server, and vice versa, that
-// the local server communicates with a corresponding remote client.
-
 mux(localClientStream, localServerStream)
   .pipe(sharedChannel)
-  .demux(localServerStream, localClientStream);
+  .demux(localClientStream, localServerStream);
 ```
 
 ## Test
