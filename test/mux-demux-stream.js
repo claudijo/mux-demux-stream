@@ -6,7 +6,7 @@ var demultiplex = require('..').demux;
 var helpers = require('./helpers');
 
 describe('Mux Demux Stream', function() {
-  describe('multiplex', function() {
+  describe('multiplex with simplex syntax', function() {
     var sourceA = null;
     var sourceB = null;
     var destination = null;
@@ -142,7 +142,7 @@ describe('Mux Demux Stream', function() {
     });
   });
 
-  describe('demultiplex', function() {
+  describe('demultiplex with simplex syntax', function() {
     var destinationA = null;
     var destinationB = null;
     var source = null;
@@ -268,7 +268,7 @@ describe('Mux Demux Stream', function() {
     });
   });
 
-  describe('compact mux demux', function () {
+  describe('multiplex and demultiplex with duplex syntax', function () {
     var sharedChannel = null;
     var localChannelA = null;
     var localChannelB = null;
