@@ -19,8 +19,8 @@ npm install mux-demux-stream
 
 ## Usage
 
-The module can be used both with a "simplex" syntax and with a "duplex" syntax,
-which offers some syntactic sugar over the simplex variant.
+The module can be used both with a "simplex" syntax and with a "duplex" syntax
+that offers some syntactic sugar over the simplex variant.
 
 The simplex syntax is used for multiplexing several readable streams into a single
 writable stream, or demultiplexing several writable streams into a single
@@ -89,8 +89,10 @@ The following simplex syntax
 // "Cross-wire" local client stream and server stream, assuming that the local
 // client communicates with a corresponding remote server, and vice versa, that
 // local server communicates with a corresponding remote client.
+
 mux([localClientStream, localServerStream], sharedChannel);
 demux(sharedChannel, [localServerStream, localClientStream]);
+```
 
 is equivalent to the following duplex syntax.
 
@@ -98,6 +100,7 @@ is equivalent to the following duplex syntax.
 // "Cross-wire" local client stream and server stream, assuming that the local
 // client communicates with a corresponding remote server, and vice versa, that
 // local server communicates with a corresponding remote client.
+
 mux(localClientStream, localServerStream)
   .pipe(sharedChannel)
   .demux(localServerStream, localClientStream);
