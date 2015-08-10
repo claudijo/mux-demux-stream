@@ -38,7 +38,7 @@ fashion.)
 
 ### Simplex syntax
 
-Require module
+Require module and specific functions.
 
 ```js
 var mux = require('mux-demux-stream').mux;
@@ -71,7 +71,7 @@ demux(source, [destinationA, destinationB]);
 
 ### Duplex syntax
 
-Require module
+Require module.
 
 ```js
 var mux = require('mux-demux-stream);
