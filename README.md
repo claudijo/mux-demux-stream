@@ -71,17 +71,18 @@ demux(source, [destinationA, destinationB]);
 
 ### Duplex syntax
 
-Require module.
+Require module. (Note that this is not the same `mux` function as in the example
+above.)
 
 ```js
-var mux = require('mux-demux-stream);
+var mux = require('mux-demux-stream');
 ```
 
 #### mux(channel1[, ...]).pipe(sharedChannel).demux(channel1[, ...])
 
-The duplex variant uses "chaining" and closures to form a natural stream syntax
-when several duplex streams are multiplexed into and from a shared channel
-stream.
+Internally, the duplex variant uses "chaining" and closures to form a natural
+stream syntax when several duplex streams are multiplexed into and from a shared
+channel stream.
 
 The following simplex syntax:
 
