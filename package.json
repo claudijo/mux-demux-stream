@@ -1,6 +1,6 @@
 {
   "name": "mux-demux-stream",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Multiplexer and demultiplexter for binary/text streams.",
   "main": "index.js",
   "directories": {
